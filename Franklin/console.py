@@ -1,6 +1,8 @@
 from cryptography.fernet import Fernet
 from getpass import getpass
-import os,subprocess
+import os,subprocess,sys
+
+os.chdir(os.path.dirname(sys.argv[0]))
 
 def new(preset_name):
     path = "accounts/" + preset_name

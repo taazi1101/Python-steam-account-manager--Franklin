@@ -1,10 +1,13 @@
 from cryptography.fernet import Fernet
 from getpass import getpass
-import os,subprocess
+import os,subprocess,sys
 from tkinter import *
 
-def new(preset_name,username,password,close):
+os.chdir(os.path.dirname(sys.argv[0]))
+
+def new(preset_name,username,password,close,preset_list):
     path = "accounts/" + preset_name
+    preset_list.insert(preset_list.size()+1,preset_name)
     close.destroy()
     if os.path.exists("accounts/key.key") == False:
         key = Fernet.generate_key()
@@ -30,7 +33,7 @@ def login(preset_name,steam_path,close):
     
     subprocess.call([steam_path,"-login",username,password])
 
-def new_new(steam_path):
+def new_new(steam_path,preset_list):
     rot = Tk()
     rot.resizable(False,False)
 
@@ -38,7 +41,7 @@ def new_new(steam_path):
     pass_text = Label(rot,text="Password")
     user_entry = Entry(rot,width=20)
     pass_entry = Entry(rot,show="*",width=20)
-    done_button = Button(rot,text="Done",command=lambda:new(user_entry.get(),user_entry.get(),pass_entry.get(),rot))
+    done_button = Button(rot,text="Done",command=lambda:new(user_entry.get(),user_entry.get(),pass_entry.get(),rot,preset_list))
 
     user_text.grid(row=1,column=0)
     pass_text.grid(row=1,column=1)
@@ -59,13 +62,12 @@ try:
     presets.remove("key.key")
 except:
     pass
-presets.append("")
 
 root = Tk()
 root.resizable(False,False)
 
 preset_list = Listbox(width=30)
-new_button = Button(text="New",command=lambda:new_new(steam_path))
+new_button = Button(text="New",command=lambda:new_new(steam_path,preset_list))
 open_button = Button(text="Open",command=lambda:login(preset_list.get(preset_list.curselection()), steam_path,root))
 x = 1
 for preset in presets:
